@@ -7,29 +7,38 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 data_path = './matrix.csv'
-
 data = np.loadtxt(data_path, dtype=int, delimiter=',')
-d1 = np.genfromtxt(data_path, dtype=int, delimiter=',', names=True)
 
-d = np.asmatrix(data)
+Adj_matrix = np.asmatrix(d1)
 
-print(d1)
+G = nx.from_numpy_matrix(data, create_using=nx.DiGraph)
 
-def show_graph_with_labels(adjacency_matrix):
-    '''
-    Shows graph
-    '''
-    rows, cols = np.where(adjacency_matrix == 1)
-    edges = zip(rows.tolist(), cols.tolist())
-    gr = nx.DiGraph()
-    gr.add_edges_from(edges)
-    nx.draw(gr, node_size=100, with_labels=False)
-    plt.show()
-
-show_graph_with_labels(data)
+nx.draw(G, with_labels=True)
+plt.show()
 
 
 
 
-#G = nx.DiGraph()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
