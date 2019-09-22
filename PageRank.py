@@ -6,10 +6,12 @@ import networkx as nx
 import numpy as np
 import matplotlib.pyplot as plt
 import time
+import random
 
 data_path = './matrix.csv'
 data = np.loadtxt(data_path, delimiter=',')
 rrr = np.loadtxt(data_path,dtype = int, delimiter=',')
+beta = 0.8
 
 # get the dictionary that has the weights of each node
 node_weight_dict ={}
@@ -23,9 +25,9 @@ for val in range(21):
 
 adj_matrix = np.asmatrix(rrr)
 #print(adj_matrix)
-#G = nx.from_numpy_matrix(adj_matrix, create_using=nx.DiGraph)
-#nx.draw(G, with_labels=True)
-#plt.show()
+G = nx.from_numpy_matrix(adj_matrix, create_using=nx.DiGraph)
+nx.draw(G, with_labels=True)
+plt.show()
 
 matrix_size = 21
 weighted_matrix = np.zeros(shape=(matrix_size,matrix_size))
@@ -73,16 +75,58 @@ def Power_Iteration(given_matrix):
     index = np.argmax(r_vector)
     return index,high_page
 
-x,y = Power_Iteration(weighted_matrix)
-print("Max Page Rank: " + str(x))
-print("Value: " + str(y))
+#x,y = Power_Iteration(weighted_matrix)
+#print("Max Page Rank: " + str(x))
+#print("Value: " + str(y))
 
 #Figure out the connection between power iteration vs random walker
 #do we have to run power iteration until all nodes visited???
 # I think we do its the same calculations 
 
+def Random_Walker(prev_node, graph_node):
+    print("Current Node: " + str(graph_node))
+    print("Neighbors " )
+    print([n for n in G.neighbors(graph_node)])
+    #gets neighbors
+    successor_list = [n for n in G.neighbors(graph_node)]
+    #chooses random node from neighbors
+    #validate two cases:
+    #first case: dead end
+    if (len(successor_list) == 0):
+        Jumper(graph_node, "DE")
+    #second case: random chance/spider trap
+    else:
+        beta_random = random.uniform(0, 1)
+        next_value = random.choice(successor_list)
+        print(beta_random)
+        if (beta_random <= beta):
+            time.sleep(3)
+            Random_Walker(graph_node, next_value)
+        else:
+            Jumper(None, "ST")
+
+
+def Jumper(node, case):
+    if case == "DE":
+        print("Dead End - Transport")
+        random_list = [i for i in range(20)]
+        starting_value = random.choice(random_list)
+        for row in range(21):
+            weighted_matrix[row,node] = (1/21)
+        print(weighted_matrix)
+        time.sleep(3)
+        Random_Walker(None, starting_value)
+
+    elif case == "ST":
+        print("Spider Trap - Transport")
+        random_list = [i for i in range(20)]
+        starting_value = random.choice(random_list)
+        time.sleep(3)
+        Random_Walker(None, starting_value)
 
 
 
-
-
+#picks random number in range 1:20 and calls Random_Walker()
+random_list = [i for i in range(20)]
+starting_value = random.choice(random_list)
+Random_Walker(None, starting_value)
