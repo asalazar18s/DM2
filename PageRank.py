@@ -7,11 +7,15 @@ import numpy as np
 import matplotlib.pyplot as plt
 import time
 import random
+import sys
 
 data_path = './matrix.csv'
 data = np.loadtxt(data_path, delimiter=',')
 rrr = np.loadtxt(data_path,dtype = int, delimiter=',')
 beta = 0.8
+nodes_visited_dict = {}
+for i in range(21):
+    nodes_visited_dict[i] = False;
 
 #initial r vector
 r_list = [1/21] * 21
@@ -55,6 +59,7 @@ for row in range(21):
 def Power_Iteration(r, given_matrix):
     given_matrix = np.asarray(given_matrix)
     #time.sleep(3)
+    global r_vector
     r_vector = np.dot(given_matrix, r)
     #print("R_Vector Iteration: " + str(iter + 1))
     print(r_vector)
@@ -63,30 +68,39 @@ def Power_Iteration(r, given_matrix):
     print("------------------------------------------------------------------")
 
 def Random_Walker(prev_node, graph_node):
-    print("Current Node: " + str(graph_node))
-    print("Neighbors " )
-    print([n for n in G.neighbors(graph_node)])
-    #gets neighbors
-    successor_list = [n for n in G.neighbors(graph_node)]
-    #chooses random node from neighbors
-    #validate two cases:
-    #first case: dead end
-    if (len(successor_list) == 0):
-        Jumper(graph_node, "DE")
-    #second case: random chance/spider trap
+    if all(value == True for value in nodes_visited_dict.values()):
+        print("All nodes visited")
+        print(np.max(r_vector))
+        sys.exit()
+
     else:
-        beta_random = random.uniform(0, 1)
-        next_value = random.choice(successor_list)
-        print("Beta Probability: " + str(beta_random))
-        if (beta_random <= beta):
-            Power_Iteration(r_vector, weighted_matrix)
-            time.sleep(3)
-            Random_Walker(graph_node, next_value)
+        print("Current Node: " + str(graph_node))
+        print("Neighbors ")
+        print([n for n in G.neighbors(graph_node)])
+        nodes_visited_dict[graph_node] = True
+        print(nodes_visited_dict)
+        # gets neighbors
+        successor_list = [n for n in G.neighbors(graph_node)]
+        # chooses random node from neighbors
+        # validate two cases:
+        # first case: dead end
+        if (len(successor_list) == 0):
+            Jumper(graph_node, "DE")
+        # second case: random chance/spider trap
         else:
-            Jumper(None, "ST")
+            beta_random = random.uniform(0, 1)
+            next_value = random.choice(successor_list)
+            print("Beta Probability: " + str(beta_random))
+            if (beta_random <= beta):
+                Power_Iteration(r_vector, weighted_matrix)
+                #time.sleep(3)
+                Random_Walker(graph_node, next_value)
+            else:
+                Jumper(None, "ST")
 
 
 def Jumper(node, case):
+    global weighted_matrix
     if case == "DE":
         print("Dead End - Transport")
         random_list = [i for i in range(20)]
@@ -95,7 +109,7 @@ def Jumper(node, case):
             weighted_matrix[row,node] = (1/21)
         print(weighted_matrix)
         Power_Iteration(r_vector, weighted_matrix)
-        time.sleep(3)
+        #time.sleep(3)
         Random_Walker(None, starting_value)
 
     elif case == "ST":
@@ -103,7 +117,7 @@ def Jumper(node, case):
         random_list = [i for i in range(20)]
         starting_value = random.choice(random_list)
         Power_Iteration(r_vector, weighted_matrix)
-        time.sleep(3)
+        #time.sleep(3)
         Random_Walker(None, starting_value)
 
 
