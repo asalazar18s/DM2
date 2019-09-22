@@ -13,6 +13,10 @@ data = np.loadtxt(data_path, delimiter=',')
 rrr = np.loadtxt(data_path,dtype = int, delimiter=',')
 beta = 0.8
 
+#initial r vector
+r_list = [1/21] * 21
+r_vector = np.asarray(r_list)
+
 # get the dictionary that has the weights of each node
 node_weight_dict ={}
 counter = 0
@@ -48,40 +52,15 @@ for row in range(21):
                 weighted_matrix[col, row] = round((1/ node_weight_dict[row]),2)
 
 
-
-#print(weighted_matrix)
-
-
-
-def Power_Iteration(given_matrix):
+def Power_Iteration(r, given_matrix):
     given_matrix = np.asarray(given_matrix)
-    r_list = [1/21] * 21
-    print("R_Vector Iteration: " + str(0))
-    r_vector = np.asarray(r_list)
-    print(r_vector)
-    print("Sum of Vector: " +str(r_vector.sum()))
-    print("Module of Vector: " +str(np.linalg.norm(r_vector)))
     #time.sleep(3)
+    r_vector = np.dot(given_matrix, r)
+    #print("R_Vector Iteration: " + str(iter + 1))
+    print(r_vector)
+    print("Sum of Vector: " + str(r_vector.sum()))
+    print("Module of Vector: " + str(np.linalg.norm(r_vector)))
     print("------------------------------------------------------------------")
-    for iter in range(21):
-        r_vector = np.dot(given_matrix, r_vector)
-        print("R_Vector Iteration: " + str(iter + 1))
-        print(r_vector)
-        print("Sum of Vector: " + str(r_vector.sum()))
-        print("Module of Vector: " + str(np.linalg.norm(r_vector)))
-        print("------------------------------------------------------------------")
-        #time.sleep(3)
-    high_page = np.amax(r_vector)
-    index = np.argmax(r_vector)
-    return index,high_page
-
-#x,y = Power_Iteration(weighted_matrix)
-#print("Max Page Rank: " + str(x))
-#print("Value: " + str(y))
-
-#Figure out the connection between power iteration vs random walker
-#do we have to run power iteration until all nodes visited???
-# I think we do its the same calculations 
 
 def Random_Walker(prev_node, graph_node):
     print("Current Node: " + str(graph_node))
@@ -98,8 +77,9 @@ def Random_Walker(prev_node, graph_node):
     else:
         beta_random = random.uniform(0, 1)
         next_value = random.choice(successor_list)
-        print(beta_random)
+        print("Beta Probability: " + str(beta_random))
         if (beta_random <= beta):
+            Power_Iteration(r_vector, weighted_matrix)
             time.sleep(3)
             Random_Walker(graph_node, next_value)
         else:
@@ -114,19 +94,25 @@ def Jumper(node, case):
         for row in range(21):
             weighted_matrix[row,node] = (1/21)
         print(weighted_matrix)
+        Power_Iteration(r_vector, weighted_matrix)
         time.sleep(3)
         Random_Walker(None, starting_value)
 
     elif case == "ST":
-        print("Spider Trap - Transport")
+        print("Spider Trap/Random - Transport")
         random_list = [i for i in range(20)]
         starting_value = random.choice(random_list)
+        Power_Iteration(r_vector, weighted_matrix)
         time.sleep(3)
         Random_Walker(None, starting_value)
 
 
 
 #picks random number in range 1:20 and calls Random_Walker()
+print(r_vector)
+print("Sum of Vector: " + str(r_vector.sum()))
+print("Module of Vector: " + str(np.linalg.norm(r_vector)))
+
 random_list = [i for i in range(20)]
 starting_value = random.choice(random_list)
 Random_Walker(None, starting_value)
