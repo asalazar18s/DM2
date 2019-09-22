@@ -5,6 +5,7 @@ Page Rank example algorithm
 import networkx as nx
 import numpy as np
 import matplotlib.pyplot as plt
+import time
 
 data_path = './matrix.csv'
 data = np.loadtxt(data_path, delimiter=',')
@@ -34,15 +35,24 @@ for row in range(21):
 
 
 def Power_Iteration(given_matrix):
+    given_matrix = np.asarray(given_matrix)
     r_list = [1/21] * 21
+    print("R_Vector Iteration: " + str(0))
     r_vector = np.asarray(r_list)
+    print(r_vector)
+    time.sleep(3)
+    for iter in range(21):
+        r_vector = np.dot(given_matrix, r_vector)
+        print("R_Vector Iteration: " + str(iter + 1))
+        print(r_vector)
+        print(r_vector.sum())
+        time.sleep(3)
 
-    for iteration in range(1):
-        print(np.matmul(weighted_matrix, r_vector))
+
 
 
 Power_Iteration(weighted_matrix)
-print(weighted_matrix)
+#print(weighted_matrix)
 
 
 
