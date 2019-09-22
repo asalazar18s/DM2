@@ -73,13 +73,13 @@ def Power_Iteration(given_matrix):
     index = np.argmax(r_vector)
     return index,high_page
 
-
-
-
 x,y = Power_Iteration(weighted_matrix)
 print("Max Page Rank: " + str(x))
 print("Value: " + str(y))
 
+#Figure out the connection between power iteration vs random walker
+#do we have to run power iteration until all nodes visited???
+# I think we do its the same calculations 
 
 
 
