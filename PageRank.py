@@ -14,6 +14,7 @@ data = np.loadtxt(data_path, delimiter=',')
 rrr = np.loadtxt(data_path,dtype = int, delimiter=',')
 beta = 0.8
 nodes_visited_dict = {}
+counter = 0
 for i in range(21):
     nodes_visited_dict[i] = False;
 
@@ -68,12 +69,15 @@ def Power_Iteration(r, given_matrix):
     print("------------------------------------------------------------------")
 
 def Random_Walker(prev_node, graph_node):
+    global counter
     if all(value == True for value in nodes_visited_dict.values()):
         print("All nodes visited")
-        print(np.max(r_vector))
+        print("Mayor Valor: " + str(np.max(r_vector)))
+        print("Iteraciones " + str(counter))
         sys.exit()
 
     else:
+        counter += 1
         print("Current Node: " + str(graph_node))
         print("Neighbors ")
         print([n for n in G.neighbors(graph_node)])
